@@ -27,11 +27,16 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 # Initialize Azure OpenAI client
-azure_openai_client = AzureOpenAI(
-    api_key=os.getenv('AZURE_OPENAI_API_KEY'),
-    api_version=os.getenv('AZURE_OPENAI_API_VERSION'),
-    azure_endpoint=os.getenv('AZURE_OPENAI_ENDPOINT')
-)
+try:
+    azure_openai_client = AzureOpenAI(
+        api_key=os.getenv('AZURE_OPENAI_API_KEY'),
+        api_version=os.getenv('AZURE_OPENAI_API_VERSION', '2023-05-15'),
+        azure_endpoint=os.getenv('AZURE_OPENAI_ENDPOINT')
+    )
+    logger.info("Azure OpenAI client initialized successfully")
+except Exception as e:
+    logger.warning(f"Azure OpenAI client initialization failed: {e}")
+    azure_openai_client = None
 
 # Initialize sentence transformer for semantic similarity
 try:
@@ -851,6 +856,17 @@ def health_check():
         "status": "healthy",
         "service": "Nirmaan AI Communication Scorer",
         "version": "1.0.0",
+        "timestamp": datetime.utcnow().isoformat(),
+        "port": os.environ.get('PORT', 'not set'),
+        "environment": os.environ.get('FLASK_ENV', 'not set')
+    }), 200
+
+@app.route('/test')
+def test_endpoint():
+    """Simple test endpoint to verify the app is running"""
+    return jsonify({
+        "message": "Nirmaan AI Communication Scorer is running!",
+        "status": "success",
         "timestamp": datetime.utcnow().isoformat()
     }), 200
 
