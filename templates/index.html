@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nirmaan AI Communication Scorer</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+</head>
+<body>
+    <!-- Header -->
+    <nav class="navbar navbar-expand-lg">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <i class="fas fa-brain"></i>
+                Nirmaan AI Communication Scorer
+            </a>
+        </div>
+    </nav>
+
+    <div class="main-container">
+            <div class="row">
+                <!-- Input Section -->
+                <div class="col-lg-6 mb-4">
+                    <div class="card h-100">
+                        <div class="card-header">
+                            <h5 class="mb-0">
+                                <i class="fas fa-microphone-alt me-2"></i>
+                                Input Transcript
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <form id="scoringForm">
+                                <div class="mb-3">
+                                    <label for="transcript" class="form-label">Paste your self-introduction transcript:</label>
+                                    <textarea 
+                                        class="form-control" 
+                                        id="transcript" 
+                                        rows="12" 
+                                        placeholder="Hello everyone, myself Muskan, studying in class 8th B section from Christ Public School. I am 13 years old. I live with my family. There are 3 people in my family, me, my mother and my father..."
+                                        required
+                                    ></textarea>
+                                    <div class="word-count-display">
+                                        <div class="form-text">
+                                            <i class="fas fa-chart-bar me-2"></i>
+                                            <span id="wordCount">0 words</span> | 
+                                            <span id="charCount">0 characters</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="duration" class="form-label">Duration (optional):</label>
+                                    <div class="input-group">
+                                        <input type="number" class="form-control" id="duration" placeholder="52" min="1">
+                                        <span class="input-group-text">seconds</span>
+                                    </div>
+                                    <div class="form-text">If provided, will be used for speech rate calculation</div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label">Or record audio directly:</label>
+                                    <div class="card border-2 border-dashed border-primary bg-light">
+                                        <div class="card-body text-center py-4">
+                                            <div id="recordingControls">
+                                                <div id="recordingStatus" class="mb-3">
+                                                    <i class="fas fa-microphone fa-3x text-muted mb-2"></i>
+                                                    <p class="mb-0 text-muted">Click to start recording your self-introduction</p>
+                                                </div>
+                                                
+                                                <div class="d-flex justify-content-center gap-3 mb-3">
+                                                    <button type="button" class="btn btn-primary" id="startRecordingBtn">
+                                                        <i class="fas fa-microphone me-2"></i>
+                                                        Start Recording
+                                                    </button>
+                                                    <button type="button" class="btn btn-danger d-none" id="stopRecordingBtn">
+                                                        <i class="fas fa-stop me-2"></i>
+                                                        Stop Recording
+                                                    </button>
+                                                    <button type="button" class="btn btn-outline-secondary d-none" id="playRecordingBtn">
+                                                        <i class="fas fa-play me-2"></i>
+                                                        Play
+                                                    </button>
+                                                    <button type="button" class="btn btn-outline-warning d-none" id="clearRecordingBtn">
+                                                        <i class="fas fa-trash me-2"></i>
+                                                        Clear
+                                                    </button>
+                                                </div>
+                                                
+                                                <div id="recordingTimer" class="d-none">
+                                                    <div class="d-flex align-items-center justify-content-center mb-2">
+                                                        <div class="recording-pulse me-2"></div>
+                                                        <span class="fw-bold text-danger" id="timerDisplay">00:00</span>
+                                                    </div>
+                                                    <div class="progress" style="height: 4px;">
+                                                        <div class="progress-bar bg-danger" id="recordingProgress" style="width: 0%"></div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <audio id="audioPlayback" class="d-none" controls></audio>
+                                            </div>
+                                            
+                                            <div class="form-text mt-2">
+                                                <i class="fas fa-info-circle me-1"></i>
+                                                <small>Recording will be stored in Azure Storage and processed automatically</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="d-grid gap-2">
+                                    <button type="submit" class="btn btn-success btn-lg" id="scoreBtn">
+                                        <i class="fas fa-chart-line me-2"></i>
+                                        Score Communication
+                                    </button>
+                                    <button type="button" class="btn btn-outline-secondary" id="clearBtn">
+                                        <i class="fas fa-eraser me-2"></i>
+                                        Clear
+                                    </button>
+                                </div>
+                            </form>
+
+                            <!-- Additional Action Buttons -->
+                            <div class="mt-3">
+                                <div class="d-grid gap-2">
+                                    <button type="button" class="btn btn-outline-info btn-sm" id="loadSampleBtn">
+                                        <i class="fas fa-file-import me-2"></i>
+                                        Load Sample Data
+                                    </button>
+                                    <button type="button" class="btn btn-outline-primary btn-sm" id="createSampleEmbeddingsBtn">
+                                        <i class="fas fa-vector-square me-2"></i>
+                                        Create Sample Embeddings
+                                    </button>
+                                    <button type="button" class="btn btn-outline-warning btn-sm" id="findSimilarBtn" disabled>
+                                        <i class="fas fa-search me-2"></i>
+                                        Find Similar Texts
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Results Section -->
+                <div class="col-lg-6 mb-4">
+                    <div class="card h-100 slide-in-right">
+                        <div class="card-header">
+                            <h5 class="mb-0">
+                                <i class="fas fa-chart-line me-2"></i>
+                                Scoring Results
+                            </h5>
+                        </div>
+                        <div class="card-body" id="resultsContainer">
+                            <div class="text-center text-muted py-5" id="noResults">
+                                <div class="mb-4">
+                                    <i class="fas fa-chart-line fa-4x text-gradient"></i>
+                                </div>
+                                <h5 class="mb-3">Ready to Analyze</h5>
+                                <p class="lead">Enter a transcript and click "Score Communication" to see detailed results</p>
+                                <div class="mt-4">
+                                    <div class="d-inline-flex align-items-center gap-3 text-muted">
+                                        <span><i class="fas fa-microphone me-2"></i>Audio Support</span>
+                                        <span><i class="fas fa-brain me-2"></i>AI Analysis</span>
+                                        <span><i class="fas fa-chart-bar me-2"></i>Detailed Scoring</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Detailed Results Section -->
+            <div class="row" id="detailedResultsRow" style="display: none;">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0">
+                                <i class="fas fa-microscope me-2"></i>
+                                Detailed Criterion Analysis
+                            </h5>
+                        </div>
+                        <div class="card-body" id="detailedResults">
+                            <!-- Detailed results will be populated here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Rubric Information -->
+            <div class="row mt-4">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0">
+                                <i class="fas fa-graduation-cap me-2"></i>
+                                Scoring Rubric Information
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <h6>Content & Structure (40%)</h6>
+                                    <ul class="list-unstyled ms-3">
+                                        <li><strong>Salutation (5%):</strong> Greeting quality</li>
+                                        <li><strong>Key Words (30%):</strong> Essential information presence</li>
+                                        <li><strong>Flow (5%):</strong> Logical order of presentation</li>
+                                    </ul>
+                                </div>
+                                <div class="col-md-6">
+                                    <h6>Language & Grammar (20%)</h6>
+                                    <ul class="list-unstyled ms-3">
+                                        <li><strong>Grammar (10%):</strong> Grammatical accuracy</li>
+                                        <li><strong>Vocabulary (10%):</strong> Word variety (TTR)</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <h6>Speech Rate (10%)</h6>
+                                    <p class="small">Optimal: 111-140 WPM</p>
+                                </div>
+                                <div class="col-md-4">
+                                    <h6>Clarity (15%)</h6>
+                                    <p class="small">Filler word frequency</p>
+                                </div>
+                                <div class="col-md-4">
+                                    <h6>Engagement (15%)</h6>
+                                    <p class="small">Sentiment and positivity</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Modal -->
+    <div class="modal fade" id="loadingModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-body text-center py-4">
+                    <div class="spinner-border text-primary mb-3" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <h5>Processing...</h5>
+                    <p class="mb-0 text-muted">Please wait while we analyze your communication.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>
