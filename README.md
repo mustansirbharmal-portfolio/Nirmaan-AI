@@ -56,8 +56,8 @@ AZURE_SPEECH_REGION=your_region
 # Azure Cosmos DB
 COSMOS_ENDPOINT=https://your-account.documents.azure.com:443/
 COSMOS_KEY=your_cosmos_key
-COSMOS_DATABASE_NAME=org-data
-COSMOS_CONTAINER_NAME=embeddings
+COSMOS_DATABASE_NAME=database_name
+COSMOS_CONTAINER_NAME=container_name
 
 # Azure OpenAI
 AZURE_OPENAI_ENDPOINT=https://your-openai.openai.azure.com/
@@ -369,8 +369,8 @@ AZURE_SPEECH_REGION=eastus  # or your region
 # Copy from Azure Cosmos DB
 COSMOS_ENDPOINT=https://your-cosmosdb-account.documents.azure.com:443/
 COSMOS_KEY=your_actual_cosmos_primary_key_here
-COSMOS_DATABASE_NAME=org-data
-COSMOS_CONTAINER_NAME=embeddings
+COSMOS_DATABASE_NAME=database_name
+COSMOS_CONTAINER_NAME=container_name
 
 # Copy from Azure OpenAI
 AZURE_OPENAI_ENDPOINT=https://your-openai-resource.openai.azure.com/
@@ -524,8 +524,8 @@ AZURE_SPEECH_KEY=your_speech_service_key
 AZURE_SPEECH_REGION=your_region
 COSMOS_ENDPOINT=https://your-account.documents.azure.com:443/
 COSMOS_KEY=your_cosmos_key
-COSMOS_DATABASE_NAME=org-data
-COSMOS_CONTAINER_NAME=embeddings
+COSMOS_DATABASE_NAME=database_name
+COSMOS_CONTAINER_NAME=container_name
 AZURE_OPENAI_ENDPOINT=https://your-openai.openai.azure.com/
 AZURE_OPENAI_API_KEY=your_openai_key
 AZURE_OPENAI_API_VERSION=2023-05-15
@@ -569,3 +569,4 @@ For issues and questions, please refer to the project documentation or create an
 - Based on the Nirmaan AI Communication Program requirements
 - Uses Azure Cognitive Services for advanced AI capabilities
 - Built with modern web technologies for optimal user experience
+
